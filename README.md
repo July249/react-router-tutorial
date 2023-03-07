@@ -320,3 +320,45 @@ export default function Root() {
   );
 }
 ```
+
+## 06. Client Side Routing
+
+When we click the links in the sidebar, the browser is doing a full document request for the next URL instead of using React Router.
+
+Client side rendering allows our app to update the URL without requesting another document from the server.
+
+Instead, the app can immediately render new UI.
+
+Let's make it happen with `<Link>`.
+
+- Change the sidebar `<a href>` to `<Link to>`
+
+```jsx
+// root.jsx
+import { Outlet, Link } from 'react-router-dom';
+
+export default function Root() {
+  return (
+    <>
+      <div id='sidebar'>
+        {/* other elements */}
+
+        <nav>
+          <ul>
+            <li>
+              <Link to={`contacts/1`}>Your Name</Link>
+            </li>
+            <li>
+              <Link to={`contacts/2`}>Your Friend</Link>
+            </li>
+          </ul>
+        </nav>
+
+        {/* other elements */}
+      </div>
+    </>
+  );
+}
+```
+
+You can check that it's not requesting documents anymore when URL is changed in the devtools.
