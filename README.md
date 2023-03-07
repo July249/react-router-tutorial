@@ -6,9 +6,9 @@
 
 ## 01. Adding a Router
 
-Create a Browser Router. This will enable client side routing for our web app.
+- Create a Browser Router. This will enable client side routing for our web app.
 
-Create and render a browser router in main.jsx
+- Create and render a browser router in main.jsx
 
 ```jsx
 // main.jsx
@@ -37,9 +37,9 @@ This first route is what we often call the "root route" since the rest of our ro
 
 Add the global layout for this app.
 
-Create src/routes/root.jsx
+- Create `src/routes/root.jsx`
 
-Create the root layout component
+- Create the root layout component
 
 ```jsx
 // root.jsx
@@ -81,7 +81,7 @@ export default function Root() {
 }
 ```
 
-Set `<Rout>` as the root route's `element`
+- Set `<Rout>` as the root route's `element`
 
 ```jsx
 // main.jsx
@@ -110,7 +110,7 @@ It's always a good idea to know how your app responds to errors early in the pro
 
 Anytime your app throws an error while rendering, loading data, or performing data mutations, React Router will catch it and render an error screen. Let's make our own error page.
 
-Create an error page component, `src/error-page.jsx`.
+- Create an error page component, `src/error-page.jsx`.
 
 ```jsx
 // error-page.jsx
@@ -132,7 +132,7 @@ export default function ErrorPage() {
 }
 ```
 
-Set the `<ErrorPage>` as the `errorElement` on the root route
+- Set the `<ErrorPage>` as the `errorElement` on the root route
 
 ```jsx
 // main.jsx
@@ -157,3 +157,117 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 Note that `useRouteError` provides the error that was thrown. When the user navigates to routes that don't exist you'll get an error response with a "Not Found" `statusText`. We'll see some other errors later in the tutorial and discuss them more.
 
 For now, it's enough to know that pretty mush all of your errors will now be handled by this page instead of infinite spinners, unresponsive pages, or blank screens.
+
+## 04. The Contact Route UI
+
+Instead of a 404 "Not Found" page, we want to actually render something at the URLs we've linked to. For that, we need to make a new route.
+
+- Create the contact route module, `src/routes/contact.jsx`
+
+- Add the contact component UI
+
+```jsx
+// contact.jsx
+import { Form } from 'react-router-dom';
+
+export default function Contact() {
+  const contact = {
+    first: 'Your',
+    last: 'Name',
+    avatar: 'https://placekitten.com/g/200/200',
+    twitter: 'your_handle',
+    notes: 'Some notes',
+    favorite: true,
+  };
+
+  return (
+    <div id='contact'>
+      <div>
+        <img key={contact.avatar} src={contact.avatar || null} />
+      </div>
+
+      <div>
+        <h1>
+          {contact.first || contact.last ? (
+            <>
+              {contact.first} {contact.last}
+            </>
+          ) : (
+            <i>No Name</i>
+          )}{' '}
+          <Favorite contact={contact} />
+        </h1>
+
+        {contact.twitter && (
+          <p>
+            <a target='_blank' href={`https://twitter.com/${contact.twitter}`}>
+              {contact.twitter}
+            </a>
+          </p>
+        )}
+
+        {contact.notes && <p>{contact.notes}</p>}
+
+        <div>
+          <Form action='edit'>
+            <button type='submit'>Edit</button>
+          </Form>
+          <Form
+            method='post'
+            action='destroy'
+            onSubmit={(event) => {
+              if (!confirm('Please confirm you want to delete this record.')) {
+                event.preventDefault();
+              }
+            }}
+          >
+            <button type='submit'>Delete</button>
+          </Form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Favorite({ contact }) {
+  // yes, this is a `let` for later
+  let favorite = contact.favorite;
+  return (
+    <Form method='post'>
+      <button
+        name='favorite'
+        value={favorite ? 'false' : 'true'}
+        aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
+      >
+        {favorite ? '★' : '☆'}
+      </button>
+    </Form>
+  );
+}
+```
+
+- Import the contact component and create a new route
+
+```jsx
+// main.jsx
+/* existing imports */
+import Contact from './routes/contact';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: 'contacts/:contactId',
+    element: <Contact />,
+  },
+]);
+
+/* existing code */
+```
+
+Click one of the links or visit `/contacts/1` we get our new component!
+
+However, it's not inside of our root layout.
