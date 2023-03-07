@@ -271,3 +271,52 @@ const router = createBrowserRouter([
 Click one of the links or visit `/contacts/1` we get our new component!
 
 However, it's not inside of our root layout.
+
+## 05. Nested Routes
+
+We want the contact component to render inside of the `<Root>` layout.
+
+We do it by making the contact route a child of the root route.
+
+- Move the contacts route to be a child of the root route
+
+```jsx
+// main.jsx
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: 'contacts/:contactId',
+        element: <Contact />,
+      },
+    ],
+  },
+]);
+```
+
+You'll now see the root layout again but a blank page on the right.
+
+We need to tell the root route where we want it to render its child routes. We do that with `<Oullet>`.
+
+Find the `<div id="detail">` and put an outlet inside
+
+- Render an [`<Outlet>`](https://reactrouter.com/en/main/components/outlet)
+
+```jsx
+// root.jsx
+import { Outlet } from 'react-router-dom';
+
+export default function Root() {
+  return (
+    <>
+      {/* all the other elements */}
+      <div id='detail'>
+        <Outlet />
+      </div>
+    </>
+  );
+}
+```
